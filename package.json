@@ -1,5 +1,8 @@
 {
   "name": "react-native-geetest",
+  "description": "Geetest binding for React Native",
   "version": "0.1.0",
-  "keywords": "react-native"
+  "keywords": ["react-native", "geetest"],
+  "main": "index",
+  "license": "MIT"
 }
