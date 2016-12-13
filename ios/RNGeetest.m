@@ -1,4 +1,5 @@
 #import "RCTConvert.h"
+#import "RCTEventDispatcher.h"
 
 #import "RNGeetest.h"
 
@@ -13,6 +14,8 @@ RCT_ENUM_CONVERTER(GTPresentType, (@{@"center": @(GTPopupCenterType),
 @implementation RNGeetest {
     BOOL rejectOnClose;
 }
+
+@synthesize bridge = _bridge;
 
 - (dispatch_queue_t)methodQueue
 {
@@ -81,6 +84,8 @@ RCT_EXPORT_METHOD(request:(RCTPromiseResolveBlock)resolve
         NSLog(@"geetest: close");
         if (rejectOnClose) {
             reject(@"close", @"User closed validation", NULL);
+            [self.bridge.eventDispatcher sendAppEventWithName:@"GeetestValidationFinished"
+                                                         body:@NO];
         }
     };
     
@@ -160,6 +165,8 @@ RCT_EXPORT_METHOD(request:(RCTPromiseResolveBlock)resolve
                                 // 二次验证成功后执行的方法
                                 rejectOnClose = NO;
                                 resolve(NULL);
+                                [self.bridge.eventDispatcher sendAppEventWithName:@"GeetestValidationFinished"
+                                                                             body:@YES];
                             } else {
                                 NSLog(@"geetest: statusCode: %ld", (long)httpResponse.statusCode);
                             }

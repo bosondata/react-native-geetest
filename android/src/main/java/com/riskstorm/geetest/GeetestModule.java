@@ -4,6 +4,7 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.Promise;
+import com.facebook.react.modules.core.DeviceEventManagerModule;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,6 +41,12 @@ public class GeetestModule extends ReactContextBaseJavaModule {
   public Map<String, Object> getConstants() {
     final Map<String, Object> constants = new HashMap<>();
     return constants;
+  }
+
+  private void sendValidationEvent(Boolean success) {
+      getReactApplicationContext()
+        .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+        .emit("GeetestValidationFinished", success);
   }
 
   @ReactMethod
@@ -122,9 +129,10 @@ public class GeetestModule extends ReactContextBaseJavaModule {
       dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
           @Override
           public void onCancel(DialogInterface dialog) {
-          // 取消验证
-          Log.i("geetest", "user close the geetest.");
-          mPromise.reject("400", "cancel");
+              // 取消验证
+              Log.i("geetest", "user close the geetest.");
+              mPromise.reject("400", "cancel");
+              sendValidationEvent(false);
           }
       });
 
@@ -142,6 +150,7 @@ public class GeetestModule extends ReactContextBaseJavaModule {
                       captcha.submitPostData(params, "utf-8");
                       // 验证通过, 获取二次验证响应, 根据响应判断验证是否通过完整验证
                       mPromise.resolve(null);
+                      sendValidationEvent(true);
                   } catch (Exception e) {
                       e.printStackTrace();
                   }
