@@ -1,7 +1,7 @@
 /**
  * @providesModule RNGeetest
  */
-import { NativeModules } from 'react-native';
+import { NativeModules, Platform } from 'react-native';
 const { RNGeetest } = NativeModules;
 
 function setDebugMode(debugMode) {
@@ -13,7 +13,9 @@ function request() {
 }
 
 function setPresentType(type) {
-  RNGeetest.setPresentType(type);
+  if (Platform.OS === 'ios') {
+    RNGeetest.setPresentType(type);
+  }
 }
 
 function setChallengeURL(url) {

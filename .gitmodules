@@ -1,0 +1,3 @@
+[submodule "android/gtsdk"]
+	path = android/gtsdk
+	url = https://github.com/GeeTeam/gtapp-android.git
