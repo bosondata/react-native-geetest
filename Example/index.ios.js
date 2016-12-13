@@ -10,7 +10,8 @@ import {
   StyleSheet,
   Text,
   View,
-  TouchableOpacity
+  TouchableOpacity,
+  DeviceEventEmitter
 } from 'react-native';
 
 import Geetest from 'react-native-geetest';
@@ -23,6 +24,20 @@ export default class Example extends Component {
     Geetest.setValidateURL('http://api.apiapp.cc/gtcap/gt-server-validate/');
   }
 
+  componentDidMount() {
+    this._handleGeetestValidation = this._handleGeetestValidation.bind(this);
+    DeviceEventEmitter.addListener('GeetestValidationFinished', this._handleGeetestValidation);
+  }
+
+  componentWillUnmount() {
+    DeviceEventEmitter.removeListener('GeetestValidationFinished', this._handleGeetestValidation);
+  }
+
+
+  _handleGeetestValidation(result) {
+    alert('Validation result: ' + result);
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -31,9 +46,9 @@ export default class Example extends Component {
         </Text>
         <TouchableOpacity onPress={() => {
           Geetest.request().then(() => {
-            alert('success');
+            // alert('success');
           }).catch(() => {
-            alert('failure');
+            // alert('failure');
           });
         }}>
           <View style={{borderWidth: 1, borderColor: '#CCCCCC', padding: 10}}>
