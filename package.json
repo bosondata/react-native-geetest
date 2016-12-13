@@ -4,5 +4,20 @@
   "version": "0.1.1",
   "keywords": ["react-native", "geetest"],
   "main": "index",
-  "license": "MIT"
+  "license": "MIT",
+  "peerDependencies": {
+    "react-native": "*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bosondata/react-native-geetest.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bosondata/react-native-geetest/issues"
+  },
+  "homepage": "https://github.com/bosondata/react-native-geetest",
+  "author": {
+    "name": "Messense Lv",
+    "email": "messense@icloud.com"
+  }
 }

@@ -9,23 +9,37 @@ import {
   AppRegistry,
   StyleSheet,
   Text,
-  View
+  View,
+  TouchableOpacity
 } from 'react-native';
 
+import Geetest from 'react-native-geetest';
+
+
 export default class Example extends Component {
+
+  componentWillMount() {
+    Geetest.setChallengeURL('http://api.apiapp.cc/gtcap/start-mobile-captcha/');
+    Geetest.setValidateURL('http://api.apiapp.cc/gtcap/gt-server-validate/');
+  }
+
   render() {
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}>
-          Welcome to React Native!
+          Welcome to react-native-geetest!
         </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.android.js
-        </Text>
-        <Text style={styles.instructions}>
-          Double tap R on your keyboard to reload,{'\n'}
-          Shake or press menu button for dev menu
-        </Text>
+        <TouchableOpacity onPress={() => {
+          Geetest.request().then(() => {
+            alert('success');
+          }).catch(() => {
+            alert('failure');
+          });
+        }}>
+          <View style={{borderWidth: 1, borderColor: '#CCCCCC', padding: 10}}>
+            <Text>Trigger Geetest</Text>
+          </View>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -42,12 +56,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     textAlign: 'center',
     margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
+  }
 });
 
 AppRegistry.registerComponent('Example', () => Example);
