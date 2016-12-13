@@ -16,7 +16,7 @@ For Yarn:
 $ yarn add react-native-geetest
 ```
 
-## Link
+## Link - iOS
 
 ### Manually
 
@@ -30,6 +30,43 @@ $ yarn add react-native-geetest
 $ react-native link
 ```
 
+
+## Link - Android
+
+Add to `android/settings.gradle`:
+
+```
+include ':geetest-sdk'
+project(':geetest-sdk').projectDir = new File(settingsDir, '../node_modules/react-native-geetest/android/gtsdk/sdk')
+include ':react-native-geetest'
+project(':react-native-geetest').projectDir = new File(settingsDir, '../node_modules/react-native-geetest/android')
+```
+
+Add the compile project line to `android/app/build.gradle` (inside `dependencies`):
+
+```
+dependencies {
+    // ... other content ... 
+    compile project(':react-native-geetest')
+}
+```
+
+Inside `MainApplication.java` (normally somewhere here android/app/src/main/java/com/<your-app-name>/MainApplication.java)
+ add `import import com.riskstorm.geetest.GeetestPackage;` and `new GeetestPackage()` like in the example below
+
+ ```
+ import com.riskstorm.geetest.GeetestPackage;
+
+ /* ... other content ... */
+
+   @Override
+    protected List<ReactPackage> getPackages() {
+      return Arrays.<ReactPackage>asList(
+          new MainReactPackage(),
+          new GeetestPackage()
+      );
+    }
+ ```
 
 ## Usage
 
@@ -48,5 +85,5 @@ Geetest.request().then(() => {
 
 ## Todo
 
-- [ ] Android support
+- [x] Android support
 - [ ] Better documentation

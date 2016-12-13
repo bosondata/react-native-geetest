@@ -38,9 +38,12 @@ yarn-error.log
 # BUCK
 buck-out/
 \.buckd/
+android/build
 android/app/libs
 android/keystores/debug.keystore
 
 # VSCode
 .vscode/
 typings/
+
+Example/
