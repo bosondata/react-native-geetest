@@ -37,9 +37,9 @@ Add to `android/settings.gradle`:
 
 ```
 include ':geetest-sdk'
-project(':geetest-sdk').projectDir = new File(settingsDir, '../node_modules/react-native-geetest/android/gtsdk/sdk')
+project(':geetest-sdk').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-geetest/android/gtsdk/sdk')
 include ':react-native-geetest'
-project(':react-native-geetest').projectDir = new File(settingsDir, '../node_modules/react-native-geetest/android')
+project(':react-native-geetest').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-geetest/android')
 ```
 
 Add the compile project line to `android/app/build.gradle` (inside `dependencies`):
