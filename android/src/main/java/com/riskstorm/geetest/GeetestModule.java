@@ -25,6 +25,7 @@ public class GeetestModule extends ReactContextBaseJavaModule {
   private String challengeURL;
   private String validateURL;
   private GtAppDlgTask mGtAppDlgTask;
+  private GtAppValidateTask mGtAppValidateTask;
   private Geetest captcha;
   private Promise mPromise;
 
@@ -81,7 +82,13 @@ public class GeetestModule extends ReactContextBaseJavaModule {
         @Override
         public void submitPostDataTimeout() {
             //TODO 提交二次验证超时
+            mGtAppValidateTask.cancel(true);
             Log.e("geetest", "submit error");
+        }
+
+        @Override
+        public void receiveInvalidParameters() {
+            Log.e("geetest", "ecieve invalid parameters");
         }
     });
 
@@ -90,25 +97,25 @@ public class GeetestModule extends ReactContextBaseJavaModule {
     mGtAppDlgTask.execute();
   }
 
-  class GtAppDlgTask extends AsyncTask<Void, Void, Boolean> {
+  class GtAppDlgTask extends AsyncTask<Void, Void, JSONObject> {
 
       @Override
-      protected Boolean doInBackground(Void... params) {
+      protected JSONObject doInBackground(Void... params) {
           Log.i("geetest", "geetest checking server");
           return captcha.checkServer();
       }
 
       @Override
-      protected void onPostExecute(Boolean result) {
-          if (result) {
+      protected void onPostExecute(JSONObject params) {
+          if (params != null) {
               // 根据captcha.getSuccess()的返回值 自动推送正常或者离线验证
               if (captcha.getSuccess()) {
                   Log.i("geetest", "captcha get success");
-                  openGtTest(getCurrentActivity(), captcha.getGt(), captcha.getChallenge(), captcha.getSuccess());
+                  openGtTest(getCurrentActivity(), params);
               } else {
                   // TODO 从API_1获得极验服务宕机或不可用通知, 使用备用验证或静态验证
                   // 静态验证依旧调用上面的openGtTest(_, _, _), 服务器会根据getSuccess()的返回值, 自动切换
-                  // openGtTest(getCurrentActivity(), captcha.getGt(), captcha.getChallenge(), captcha.getSuccess());
+                  // openGtTest(getCurrentActivity(), params);
                   Log.e("geetest", "Geetest Server is Down.");
 
                   // 执行此处网站主的备用验证码方案
@@ -120,9 +127,34 @@ public class GeetestModule extends ReactContextBaseJavaModule {
       }
   }
 
-  public void openGtTest(Context ctx, String id, String challenge, boolean success) {
+  class GtAppValidateTask extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            try {
+                JSONObject resJson = new JSONObject(params[0]);
+                Map<String, String> validateParams = new HashMap<String, String>();
+                validateParams.put("geetest_challenge", resJson.getString("geetest_challenge"));
+                validateParams.put("geetest_validate", resJson.getString("geetest_validate"));
+                validateParams.put("geetest_seccode", resJson.getString("geetest_seccode"));
+                String response = captcha.submitPostData(validateParams, "utf-8");
+                // 验证通过, 获取二次验证响应, 根据响应判断验证是否通过完整验证
+                mPromise.resolve(null);
+                sendValidationEvent(true);
+                return response;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return "invalid result";
+        }
+
+        @Override
+        protected void onPostExecute(String params) {
+        }
+    }
+
+  public void openGtTest(Context ctx, JSONObject params) {
       Log.i("geetest", "open geetest");
-      GtDialog dialog = new GtDialog(ctx, id, challenge, success);
+      GtDialog dialog = new GtDialog(ctx, params);
       // 启用debug可以在webview上看到验证过程的一些数据
       dialog.setDebug(this.debug);
 
@@ -141,20 +173,9 @@ public class GeetestModule extends ReactContextBaseJavaModule {
           @Override
           public void gtResult(boolean success, String result) {
               if (success) {
-                  try {
-                      JSONObject res_json = new JSONObject(result);
-                      Map<String, String> params = new HashMap<String, String>();
-                      params.put("geetest_challenge", res_json.getString("geetest_challenge"));
-                      params.put("geetest_validate", res_json.getString("geetest_validate"));
-                      params.put("geetest_seccode", res_json.getString("geetest_seccode"));
-                      captcha.submitPostData(params, "utf-8");
-                      // 验证通过, 获取二次验证响应, 根据响应判断验证是否通过完整验证
-                      mPromise.resolve(null);
-                      sendValidationEvent(true);
-                  } catch (Exception e) {
-                      e.printStackTrace();
-                  }
-
+                  GtAppValidateTask gtAppValidateTask = new GtAppValidateTask();
+                  mGtAppValidateTask = gtAppValidateTask;
+                  mGtAppValidateTask.execute(result);
               } else {
                   // TODO 验证失败
               }
