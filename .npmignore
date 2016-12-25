@@ -45,3 +45,5 @@ android/keystores/debug.keystore
 # VSCode
 .vscode/
 typings/
+
+/Example
