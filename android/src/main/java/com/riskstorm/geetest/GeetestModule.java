@@ -22,8 +22,6 @@ import com.geetest.android.sdk.GtDialog.GtListener;
 public class GeetestModule extends ReactContextBaseJavaModule {
 
   private Boolean debug = false;
-  private String challengeURL;
-  private String validateURL;
   private GtAppDlgTask mGtAppDlgTask;
   private GtAppValidateTask mGtAppValidateTask;
   private Geetest captcha;
@@ -56,19 +54,9 @@ public class GeetestModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void setChallengeURL(String url) {
-    this.challengeURL = url;
-  }
-
-  @ReactMethod
-  public void setValidateURL(String url) {
-    this.validateURL = url;
-  }
-
-  @ReactMethod
-  public void request(Promise promise) {
+  public void request(String challengeURL, String validateURL, Promise promise) {
     mPromise = promise;
-    Geetest _captcha = new Geetest(this.challengeURL, this.validateURL);
+    Geetest _captcha = new Geetest(challengeURL, validateURL);
     captcha = _captcha;
     captcha.setTimeout(30000);
 

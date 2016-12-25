@@ -4,12 +4,15 @@
 import { NativeModules, Platform } from 'react-native';
 const { RNGeetest } = NativeModules;
 
+let _challengeURL = null;
+let _validateURL = null;
+
 function setDebugMode(debugMode) {
   RNGeetest.setDebugMode(debugMode);
 }
 
-function request() {
-  return RNGeetest.request();
+function request(challengeURL, validateURL) {
+  return RNGeetest.request(challengeURL || _challengeURL, validateURL || _validateURL);
 }
 
 function setPresentType(type) {
@@ -19,11 +22,11 @@ function setPresentType(type) {
 }
 
 function setChallengeURL(url) {
-  RNGeetest.setChallengeURL(url);
+  _challengeURL = url;
 }
 
 function setValidateURL(url) {
-  RNGeetest.setValidateURL(url);
+  _validateURL = url;
 }
 
 export default {
