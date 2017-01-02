@@ -86,7 +86,6 @@ Geetest.request().then(() => {
 Also you can listen to `GeetestValidationFinished` event using `DeviceEventEmitter`,
 please view details in the Example project.
 
-## Todo
+## License
 
-- [x] Android support
-- [ ] Better documentation
+MIT
