@@ -1,5 +1,10 @@
+#if __has_include(<React/RCTConvert.h>)
 #import <React/RCTConvert.h>
 #import <React/RCTEventDispatcher.h>
+#else
+#import "RCTConvert.h"
+#import "RCTEventDispatcher.h"
+#endif
 
 #import "RNGeetest.h"
 
