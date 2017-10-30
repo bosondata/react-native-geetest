@@ -27,6 +27,10 @@ RCT_ENUM_CONVERTER(GTPresentType, (@{@"center": @(GTPopupCenterType),
     return dispatch_get_main_queue();
 }
 
++ (BOOL)requiresMainQueueSetup {
+    return YES;
+}
+
 RCT_EXPORT_MODULE()
 
 - (GTManager *)manager {
